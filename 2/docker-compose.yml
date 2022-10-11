@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  echo:
+    image: ealen/echo-server
+    mac_address: "aa:aa:aa:aa:aa:aa"
+    networks:
+      main:
+        ipv4_address: 192.168.255.2
+    ports:
+      - "8081:80"
+  
+  client:
+    image: ubuntu
+    mac_address: 6a:ea:d2:33:40:66
+    # mac_address: "bb:bb:bb:bb:bb:bb"
+    networks:
+      main:
+        ipv4_address: 192.168.255.3
+    command: tail -f /dev/null
+        
+  
+  interceptor:
+    build: .
+    networks:
+      main:
+        ipv4_address: 192.168.255.4
+    volumes:
+      - ./:/src/app:ro
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    command: tail -f /dev/null
+  
+
+networks:
+  main:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.255.0/24
+          # gateway: 192.168.255.255
