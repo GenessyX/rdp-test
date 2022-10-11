@@ -3,7 +3,7 @@ version: '3'
 services:
   echo:
     image: ealen/echo-server
-    mac_address: "aa:aa:aa:aa:aa:aa"
+    mac_address: "aa:aa:aa:aa:aa:a0"
     networks:
       main:
         ipv4_address: 192.168.255.2
@@ -11,8 +11,8 @@ services:
       - "8081:80"
   
   client:
-    image: ubuntu
-    mac_address: 6a:ea:d2:33:40:66
+    image: curlimages/curl
+    mac_address: "aa:aa:aa:aa:aa:a1"
     # mac_address: "bb:bb:bb:bb:bb:bb"
     networks:
       main:
@@ -22,6 +22,13 @@ services:
   
   interceptor:
     build: .
+    mac_address: "aa:aa:aa:aa:aa:a2"
+    environment:
+      - TARGET=192.168.255.3
+      - VICTIM=192.168.255.2
+      - MAC_ADDRESS=aa:aa:aa:aa:aa:a2
+      - IP_ADDRESS=192.168.255.4
+      - BAD_WORDS=bad-words.txt
     networks:
       main:
         ipv4_address: 192.168.255.4
@@ -30,7 +37,7 @@ services:
     privileged: true
     cap_add:
       - NET_ADMIN
-    command: tail -f /dev/null
+    command: python interceptor.py
   
 
 networks:
